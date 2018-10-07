@@ -1,5 +1,8 @@
 from flask import Flask, render_template
+
 app = Flask(__name__)
+# based on 'Python Business Intelligence cookbook' from safari online
+
 @app.route('/')
 def index():
     message = 'Welcome to Your First Flask Application!'
