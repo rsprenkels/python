@@ -1,0 +1,262 @@
+.table-xcondensed > thead > tr > th, .table-xcondensed > tbody > tr > th,
+.table-xcondensed > tfoot > tr > th, .table-xcondensed > thead > tr > td,
+.table-xcondensed > tbody > tr > td, .table-xcondensed > tfoot > tr > td,
+.div-xcondensed > div {
+  padding: 3px;
+}
+
+.table-xxcondensed > thead > tr > th, .table-xxcondensed > tbody > tr > th,
+.table-xxcondensed > tfoot > tr > th, .table-xxcondensed > thead > tr > td,
+.table-xxcondensed > tbody > tr > td, .table-xxcondensed > tfoot > tr > td {
+  padding: 1px
+}
+
+.table-xxcondensed > tbody > tr > td {
+  font-size: 12px;
+}
+
+.table-xxcondensed > thead > tr > th {
+  font-size: 12px;
+}
+
+.table-xxcondensed .btn-xs {
+  font-size: 9px;
+}
+
+.table-xxcondensed .glyphicon {
+  position: inherit;
+}
+
+.table-xxcondensed multiselect .btn {
+  padding: 1px 8px;
+}
+
+.table-xxcondensed .form-control{
+  height: 24px;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.large {
+  font-size: 120%;
+  font-weight: bold;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  padding: 15px;
+  background-color: lightblue;
+}
+
+.navbar {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.navbar-collapse {
+  position: relative;
+  padding-top: 30px !important;
+  max-height: 270px;
+}
+
+.navbar-default {
+  margin-bottom: 0;
+}
+
+@media ( min-width: 768px) {
+  .navbar-collapse {
+    padding-top: 0 !important;
+    padding-right: 38px !important;
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.table-responsive > .fixed-column {
+  position: absolute;
+  display: inline-block;
+  width: auto;
+  border-right: 1px solid #ddd;
+}
+
+@media ( min-width: 768px) {
+  .table-responsive > .fixed-column {
+    display: none;
+  }
+}
+
+.requiredInput {
+  border: 1px solid red;
+}
+
+.required:after {
+  content: " *";
+  color: red;
+}
+
+.panel-body {
+  overflow: auto;
+}
+
+.fixed-column > thead > tr,
+.fixed-column > tbody > tr {
+  height: 35px;
+  background-color: white;
+}
+
+.fixed-column > thead > tr > th:nth-child(3),
+.fixed-column > tbody > tr > td:nth-child(3) {
+  padding-left: 310px;
+  z-index: 1;
+}
+
+.fixed-column > thead > tr > th:first-child,
+.fixed-column > tbody > tr > td:first-child {
+  position: absolute;
+  width: 300px;
+  background: inherit;
+  z-index: 2;
+  margin-left: 0;
+  border-right: 1px solid black;
+}
+
+.fixed-column > thead > tr > th:nth-child(2),
+.fixed-column > tbody > tr > td:nth-child(2) {
+  position: absolute;
+  width: 100px;
+  z-index: 2;
+  margin-left: 199px;
+}
+
+.fixed-column > thead > tr > th:first-child {
+  background: white;
+}
+
+table.fixed-column {
+  display: inline-block;
+}
+
+.limit-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navbar {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 5px;
+}
+
+.panel {
+  margin-bottom: 5px;
+}
+
+.form-control.readonly {
+  padding-top: 5px;
+}
+
+.modal-xl {
+  width: 1200px;
+}
+
+.checkbox-disabled {
+  color: white;
+}
+
+.table > tbody > tr > td.bottom-line {
+  border-top: 1px solid black;
+}
+
+.table > tbody > tr > .top-line {
+  border-top: 1px solid black;
+}
+
+.fixed-column > thead > tr > th:first-child {
+  background: white;
+}
+
+label {
+  margin-bottom: 0px;
+}
+
+.row-space {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.row-label {
+  padding-top: 8px;
+  text-wrap: none;
+  font-weight: bold;
+}
+
+form > .row-space:nth-of-type(odd) {
+  background-color: #f9f9f9;
+}
+
+.bg-red {
+  background-color: red;
+}
+
+.bg-green {
+  background-color: yellowgreen;
+}
+
+.bg-orange {
+  background-color: orange;
+}
+
+.center-text {
+  text-align: left;
+}
+
+.right-text {
+  text-align: right;
+  width: 280px;
+}
+
+.left-text {
+  text-align: left;
+  width: 250px;
+}
+
+#projectDetailAdditionalEventsSection {
+  min-height: 350px
+}
+
+.spoc {
+  text-align: left;
+}
+
+.list {
+  height: 90px;
+  overflow-y: scroll;
+}
+
+multiselect.requiredInput {
+  border: none;
+}
+
+multiselect.requiredInput > div.dropdown > button {
+  border: 1px solid red;
+}
+
+body {
+    background-color: lightblue;
+}
+
+h1 {
+    color: navy;
+    margin-left: 20px;
+}
