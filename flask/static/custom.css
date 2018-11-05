@@ -1,3 +1,11 @@
+body { font-family: "Arial"}
+p { font-family: "Arial" }
+h1 { font-family: "Arial"}
+th { font-family: "Arial"}
+td { font-family: "Arial"}
+li { font-family: "Arial"}
+
+
 .table-xcondensed > thead > tr > th, .table-xcondensed > tbody > tr > th,
 .table-xcondensed > tfoot > tr > th, .table-xcondensed > thead > tr > td,
 .table-xcondensed > tbody > tr > td, .table-xcondensed > tfoot > tr > td,
@@ -259,4 +267,5 @@ body {
 h1 {
     color: navy;
     margin-left: 20px;
+    font: 30px
 }

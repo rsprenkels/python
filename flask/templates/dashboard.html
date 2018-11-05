@@ -3,7 +3,8 @@
 {% block title %}Flasky{% endblock %}
 
 {% block page_content %}
-<div class="page-header">
-    <h1>Hello, you {{ name }}!</h1>
-</div>
+
+<h2>{{ table_title }}</h2>
+{{ table|safe }}
+
 {% endblock %}

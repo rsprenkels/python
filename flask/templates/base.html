@@ -2,6 +2,11 @@
 
 {% block title %}The Title{% endblock %}
 
+{%- block metas %}
+    {{ super() }}
+    <meta http-equiv="refresh" content="60" >
+{%- endblock metas %}
+
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
@@ -14,6 +19,8 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/">Home</a>
+            <a class="navbar-brand" href="/table">Table</a>
+            <a class="navbar-brand" href="/totals">Totals</a>
         </div>
     </div>
 </div>

@@ -1,0 +1,7 @@
+bootstrap:
+https://getbootstrap.com/docs/4.0/getting-started/introduction/
+
+
+sqlalchemy:
+https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/
+https://www.sqlalchemy.org/
