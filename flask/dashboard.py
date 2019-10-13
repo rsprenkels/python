@@ -4,7 +4,6 @@ import pandas as pd
 import dash_dao
 import helper
 
-
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 

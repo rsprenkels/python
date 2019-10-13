@@ -6,9 +6,11 @@ def get_migrations():
     # from internet engine = create_engine('firebird+fdb://sysdba:masterkey@localhost:3050/c:/fdbb/school.fdb')
 
     connection_string = 'firebird+fdb://SYSDBA:Guiffez9@10.100.211.55:3050/D:/variobill/production_dg/data/DG_VARIOBILL.FDB'
-    engine = create_engine(
-        connection_string)
+
+    engine = create_engine(connection_string)
+
     connection = engine.connect()
+
     select_statement = """
         select
            adr.City as city,
@@ -31,7 +33,7 @@ def get_migrations():
 
     rows = []
     for row in result:
-        rows.append(row)
+        rows.append (row)
 
     connection.close()
 
