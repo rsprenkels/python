@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-
 class Unit:
     def __init__(self, type, location):
         self.type = type
@@ -16,7 +15,7 @@ class Unit:
 
 class Board:
     def __init__(self, ascii_lines):
-        self.units = {}
+        self.units = set()
         self.walls = {}
         self.width = len(ascii_lines[0])
         self.height = len(ascii_lines)
@@ -24,17 +23,19 @@ class Board:
         for y, line in enumerate(ascii_lines):
             for x, symbol in enumerate(line):
                 if symbol == 'G':
-                    self.units[(x, y)] = Unit(symbol, (x, y))
+                    self.units.add(Unit(symbol, (x, y)))
                 elif symbol == 'E':
-                    self.units[(x, y)] = Unit(symbol, (x, y))
+                    self.units.add(Unit(symbol, (x, y)))
                 elif symbol == '#':
                     self.walls[(x, y)] = '#'
 
     def show(self):
+        units = {u.location: u for u in self.units}
+        # print(f"type of units is {type(units)}")
         for y in range(self.width):
             for x in range(self.height):
-                if (x, y) in self.units:
-                    print(self.units[(x, y)].type, end='')
+                if (x, y) in [location for location in units]:
+                    print(units[(x, y)].type, end='')
                 elif (x, y) in self.walls:
                     print('#', end='')
                 else:
@@ -65,28 +66,40 @@ class Board:
                 dm[p] = step
                 self.fill_reachable_locations(dm, p, step + 1)
 
-    def round(self):
-        play_order = [self.units[t] for t in sorted(list(self.units.keys()))]
-        for unit in play_order:
-            targets = [u for u in play_order if u.type != unit.type]
-            # print(f"unit {unit} targets {targets}")
-            in_range = set()
-            for t in targets:
-                in_range |= self.get_range(t.location)
-            # print(f"unit {unit} in_range {in_range}")
+    def get_units_in_play_order(self):
+        return list(self.units)
+        # [self.units[t] for t in sorted(list(self.units.keys()))]
 
-            dist_map = self.reachable_locations(unit.location)
-            # self.show_dist_map(dist_map)
-            min_dist = min({dist_map[p] for p in set(dist_map.keys()).intersection(in_range)})
-            my_var = [p for p in set(dist_map.keys()).intersection(in_range) if dist_map[p] == min_dist]
-            destination = sorted(my_var, key=lambda x: (x[1], x[0]))[0]
-            # print(f"destination {destination}")
-            path_lengths = self.reachable_locations(destination)
-            # self.show_dist_map(path_lengths)
-            tusres = {p for p in set(path_lengths.keys()).intersection(self.adjacent(unit.location))}
-            next_location = sorted(tusres, key=lambda x: (x[1], x[0]))[0]
-            print(f"unit {unit} destination {destination} next_location {next_location}")
-            unit.set_location(next_location)
+    def round(self):
+        play_order = self.get_units_in_play_order()
+        for unit in play_order:
+            self.play(unit)
+        board.show()
+
+    def play(self, unit):
+        targets = [u for u in self.get_units_in_play_order() if u.type != unit.type]
+        if len(targets) > 0:
+            # print(f"unit {unit} targets {targets}")
+            if False:  # already next to a target
+                pass
+            else:  # move
+                in_range = set()
+                for t in targets:
+                    in_range |= self.get_range(t.location)
+                # print(f"unit {unit} in_range {in_range}")
+                dist_map = self.reachable_locations(unit.location)
+                # self.show_dist_map(dist_map)
+                if len(dist_map) > 0:
+                    min_dist = min({dist_map[p] for p in set(dist_map.keys()).intersection(in_range)})
+                    my_var = [p for p in set(dist_map.keys()).intersection(in_range) if dist_map[p] == min_dist]
+                    destination = sorted(my_var, key=lambda x: (x[1], x[0]))[0]
+                    # print(f"destination {destination}")
+                    path_lengths = self.reachable_locations(destination)
+                    # self.show_dist_map(path_lengths)
+                    tusres = {p for p in set(path_lengths.keys()).intersection(self.adjacent(unit.location))}
+                    next_location = sorted(tusres, key=lambda x: (x[1], x[0]))[0]
+                    # print(f"unit {unit} destination {destination} next_location {next_location}")
+                    unit.set_location(next_location)
 
     def show_dist_map(self, dm):
         for y in range(self.width):
@@ -113,11 +126,5 @@ test_board = '''\
 if __name__ == "__main__":
     board = Board(test_board.split())
     board.show()
-    board.round()
-    board.round()
-    board.round()
-    board.round()
-    board.round()
-    board.round()
-    board.round()
-    board.show()
+    for round in range(20):
+        board.round()
