@@ -25,10 +25,6 @@ santa = (0, 0)
 robo = (0, 0)
 two_counts = defaultdict(int)
 
-directions = open('2015_03_input.txt', 'r').readline()
-
-# directions = '^v'
-
 two_counts[santa] += 1
 two_counts[robo] += 1
 
