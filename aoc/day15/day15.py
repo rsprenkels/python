@@ -1,11 +1,14 @@
 from collections import defaultdict
 
 class Unit:
-    def __init__(self, type, location):
+    def __init__(self, type, location, attack_value = 3):
         self.type = type
         self.location = location
         self.hitpoints = 200
-        self.attack_value = 3
+        if type == 'E':
+            self.attack_value = attack_value
+        else:
+            self.attack_value = attack_value
 
     def __repr__(self):
         return f"{self.type} {self.location}"
@@ -15,21 +18,26 @@ class Unit:
 
 
 class Board:
-    def __init__(self, ascii_lines):
+    def __init__(self, ascii_lines, elve_attack_value = 3):
         self.units = set()
         self.walls = {}
         self.width = len(ascii_lines[0])
         self.height = len(ascii_lines)
         self.round_counter = 0
+        self.initial_elves = 0
 
         for y, line in enumerate(ascii_lines):
             for x, symbol in enumerate(line):
                 if symbol == 'G':
                     self.units.add(Unit(symbol, (x, y)))
                 elif symbol == 'E':
-                    self.units.add(Unit(symbol, (x, y)))
+                    self.units.add(Unit(symbol, (x, y), elve_attack_value))
+                    self.initial_elves += 1
                 elif symbol == '#':
                     self.walls[(x, y)] = '#'
+
+    def current_elves(self):
+        return len([u for u in self.units if u.type == 'E'])
 
     def show(self):
         units = {u.location: u for u in self.units}
@@ -85,15 +93,15 @@ class Board:
 
     def round(self):
         play_order = self.get_units_in_play_order()
-        self.sum_hitpoints = sum([u.hitpoints for u in self.units])
         did_something = False
         for unit in play_order:
             did_something |= self.play(unit)
         if did_something:
             self.round_counter += 1
-            board.show()
+            # board.show()
         else:
-            print(f"last round was {self.round_counter - 1} sum_hp {self.sum_hitpoints} game result {(self.round_counter - 1) * self.sum_hitpoints}")
+            self.sum_hitpoints = sum([u.hitpoints for u in self.units])
+            print(f"last round was {self.round_counter} sum_hp {self.sum_hitpoints} game result {(self.round_counter) * self.sum_hitpoints}")
             for u in self.units:
                 print(f"{u} {u.hitpoints}")
         return did_something
@@ -113,11 +121,13 @@ class Board:
                 targets = self.get_units_by_locations(adjacent_target_locations)
                 min_hitpoints = min([u.hitpoints for u in targets])
                 to_attack = [t for t in targets if t.hitpoints == min_hitpoints][0]
-                if to_attack.location == (4,2) and to_attack.type == 'E':
-                    print(f"{unit} attacks {to_attack} from {to_attack.hitpoints}")
+                # if to_attack.location == (4,2) and to_attack.type == 'E':
+                #     print(f"{unit} attacks {to_attack} from {to_attack.hitpoints}")
                 to_attack.hitpoints -= unit.attack_value
                 if to_attack.hitpoints <= 0:
                     self.remove(to_attack)
+                    if to_attack.type == 'E':
+                        print(f"killed {to_attack}")
                     # print (f"killed {to_attack}")
                 did_something = True
                 # print(f"{unit} already has a target")
@@ -146,8 +156,21 @@ class Board:
                             unit.set_location(next_location)
                             # print(f"to {next_location}")
                             did_something = True
-                        else:
-                            pass
+                            targets = [u for u in self.get_units_in_play_order() if u.type != unit.type]
+                            target_locations = {u.location for u in targets}
+                            adjacent_target_locations = [u for u in target_locations.intersection(self.adjacent(unit.location))]
+                            if len(adjacent_target_locations) > 0:  # next to target(s)
+                                targets = self.get_units_by_locations(adjacent_target_locations)
+                                min_hitpoints = min([u.hitpoints for u in targets])
+                                to_attack = [t for t in targets if t.hitpoints == min_hitpoints][0]
+                                # if to_attack.location == (4,2) and to_attack.type == 'E':
+                                #     print(f"{unit} attacks {to_attack} from {to_attack.hitpoints}")
+                                to_attack.hitpoints -= unit.attack_value
+                                if to_attack.hitpoints <= 0:
+                                    self.remove(to_attack)
+                                    if to_attack.type == 'E':
+                                        print (f"killed {to_attack}")
+
         return did_something
 
     def show_dist_map(self, dm):
@@ -162,6 +185,9 @@ class Board:
     def remove(self, unit):
         self.units.remove(unit)
 
+    def summary(self):
+        print(f"Elves {len([u for u in self.units if u.type == 'E'])}  Goblins {len([u for u in self.units if u.type == 'G'])}")
+        print(f"round {self.round_counter}")
 
 test_board = '''\
 #########
@@ -211,10 +237,43 @@ test_board = '''\
 #######   
 '''
 
+test_board = '''\
+#######
+#G..#E#
+#E#E.E#
+#G.##.#
+#...#E#
+#...E.#
+#######
+'''
+
+test_board = open('input.txt', 'r').read()
+
+# 271996 answer: too high. 269430 is correct.
 
 if __name__ == "__main__":
-    board = Board(test_board.split())
-    board.show()
-    keep_playing = True
-    while keep_playing:
-        keep_playing = board.round()
+    # board = Board(test_board.split())
+    # board.summary()
+    # board.show()
+    # keep_playing = True
+    # while keep_playing:
+    #     keep_playing = board.round()
+    #     board.show()
+
+    min_elve_attack = 3
+    max_elve_attack = 200
+    while min_elve_attack < max_elve_attack:
+        test_elve_attack = (min_elve_attack + max_elve_attack) // 2
+        print(f"max {max_elve_attack} min {min_elve_attack} test {test_elve_attack}")
+        board = Board(test_board.split(), test_elve_attack)
+        board.summary()
+        keep_playing = True
+        while keep_playing and board.current_elves() == board.initial_elves:
+            keep_playing = board.round()
+        board.show()
+        board.summary()
+        if board.current_elves() == board.initial_elves:
+            max_elve_attack = test_elve_attack
+        else:
+            min_elve_attack = test_elve_attack + 1
+    print(f"max {max_elve_attack} min {min_elve_attack}")
