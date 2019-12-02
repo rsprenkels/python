@@ -98,7 +98,7 @@ class Board:
             did_something |= self.play(unit)
         if did_something:
             self.round_counter += 1
-            # board.show()
+            board.show()
         else:
             self.sum_hitpoints = sum([u.hitpoints for u in self.units])
             print(f"last round was {self.round_counter} sum_hp {self.sum_hitpoints} game result {(self.round_counter) * self.sum_hitpoints}")
@@ -252,13 +252,13 @@ test_board = open('input.txt', 'r').read()
 # 271996 answer: too high. 269430 is correct.
 
 if __name__ == "__main__":
-    # board = Board(test_board.split())
-    # board.summary()
-    # board.show()
-    # keep_playing = True
-    # while keep_playing:
-    #     keep_playing = board.round()
-    #     board.show()
+    board = Board(test_board.split())
+    board.summary()
+    board.show()
+    keep_playing = True
+    while keep_playing:
+        keep_playing = board.round()
+        board.show()
 
     min_elve_attack = 3
     max_elve_attack = 200
