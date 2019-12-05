@@ -24,10 +24,7 @@ class Machine():
             return self.p[self.pc + pos]
 
     def set(self, pos, value):
-        if self.modes[3 - pos] == 0:
-            self.p[self.p[self.pc + pos]] = value
-        else:
-            self.p[self.p[self.pc + pos]] = value
+        self.p[self.p[self.pc + pos]] = value
 
     def inc_pc(self, steps):
         self.pc += steps
@@ -63,27 +60,28 @@ class Machine():
                 else:
                     self.inc_pc(3)
             elif opcode == 7: # less-than
-                if self.get(1) < self.get(2):
-                    self.set(3, 1)
-                else:
-                    self.set(3, 0)
+                self.set(3, 1 if self.get(1) < self.get(2) else 0)
                 self.inc_pc(4)
             elif opcode == 8: # equals
-                if self.get(1) == self.get(2):
-                    self.set(3, 1)
-                else:
-                    self.set(3, 0)
+                self.set(3, 1 if self.get(1) == self.get(2) else 0)
                 self.inc_pc(4)
             else:
                 print(f"unknown opcode {opcode}")
                 exit(1)
 
-def test_1():
+def test_part1():
     with open('aoc2019_05_input.txt', 'r') as f:
         instructions = list(map(int, f.readline().split(',')))
-        m = Machine(instructions)
-        prog_input = [1]
-        assert m.run(prog_input) == [0, 0, 0, 0, 0, 0, 0, 0, 0, 9219874]
+    m = Machine(instructions)
+    assert m.run([1]) == [0, 0, 0, 0, 0, 0, 0, 0, 0, 9219874]
+
+
+def test_part2():
+    with open('aoc2019_05_input.txt', 'r') as f:
+        instructions = list(map(int, f.readline().split(',')))
+    m = Machine(instructions)
+    assert m.run([5]) == [5893654]
+
 
 def test_pos_equal_8():
     m = Machine([3,9,8,9,10,9,4,9,99,-1,8])
@@ -106,11 +104,9 @@ def test_immediate_jump():
     assert m.run([5]) == [1]
 
 
-
 if __name__ == '__main__':
     with open('aoc2019_05_input.txt', 'r') as f:
         instructions = list(map(int, f.readline().split(',')))
-        m = Machine(instructions)
-
-        print(f"aoc 2019 day 05 part 1 {m.run([1])}")
-        print(f"aoc 2019 day 05 part 1 {m.run([5])}")
+    m = Machine(instructions)
+    print(f"aoc 2019 day 05 part 1 {m.run([1])}")
+    print(f"aoc 2019 day 05 part 1 {m.run([5])}")
