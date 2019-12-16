@@ -128,7 +128,7 @@ class Machine():
 
 
 def show_screen(grid, frame_counter=0, location=None):
-    tile = [' ', '#', 'o', '_', '*']
+    return
     x_min = min([k.x for k in grid.keys()])
     x_max = max([k.x for k in grid.keys()])
     y_min = min([k.y for k in grid.keys()])
@@ -142,7 +142,7 @@ def show_screen(grid, frame_counter=0, location=None):
             else:
                 print(f"{tile[grid[P(x, y)]]}", end='')
         print()
-    print(f"frame:{frame_counter}")
+    print(f"frame:{frame_counter} x {x_min} {x_max}  y {y_min} {y_max}")
 
 dir_vector = [P(0, 1), P(0, -1), P(-1, 0), P(1, 0)]
 dir_cmds = {P(0, 1):[1], P(0, -1):[2], P(-1, 0):[3], P(1, 0):[4]}
@@ -181,6 +181,19 @@ def breadth_first(grid, location, m):
             return
 
 
+def build_tree(tree, grid, node):
+    cr = [dir + node for dir in dir_vector if dir + node in grid and grid[dir + node] in [1, 3]]
+    for leaf in [leaf for leaf in cr if leaf not in tree]:
+        tree[node].add(leaf)
+        build_tree(tree, grid, leaf)
+
+
+def calc_dist(tree, nodes, start_node, depth=1):
+    for n in tree[start_node]:
+        if n not in nodes or nodes[n] > depth:
+            nodes[n] = depth
+            calc_dist(tree, nodes, n, depth + 1)
+
 
 
 def part_1(program_file):
@@ -193,11 +206,19 @@ def part_1(program_file):
     location = P(0, 0)
     grid[location] = 1
     breadth_first(grid, location, m)
-
+    loc = [p for p in grid if grid[p] == 3]
+    print(f"oxygen sytem is at {loc}")
+    tree = defaultdict(set)
+    build_tree(tree, grid, P(0, 0))
+    nodes = {}
+    calc_dist(tree, nodes, P(0, 0))
+    print(f"{loc} reachable in {nodes[loc[0]]} steps")
+    return nodes[loc[0]]
 
 def test_part_1():
     res = part_1('aoc2019_15_input.txt')
-
+    assert res == 242
 
 if __name__ == '__main__':
     res = part_1('aoc2019_15_input.txt')
+    print(f"aoc 2019 day 15 part 1: {res}")
