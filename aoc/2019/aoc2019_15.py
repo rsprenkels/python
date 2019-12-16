@@ -128,7 +128,6 @@ class Machine():
 
 
 def show_screen(grid, frame_counter=0, location=None):
-    return
     x_min = min([k.x for k in grid.keys()])
     x_max = max([k.x for k in grid.keys()])
     y_min = min([k.y for k in grid.keys()])
@@ -167,7 +166,7 @@ def breadth_first(grid, location, m):
             m.run()
             m.output.pop(0)
             return True
-    show_screen(grid, location=location)
+    # show_screen(grid, location=location)
     possible_dirs = [dir for dir in unknown_dirs if grid[location + dir] == 1]
     for dir in possible_dirs:
         m.input(dir_cmds[dir])
@@ -206,19 +205,49 @@ def part_1(program_file):
     location = P(0, 0)
     grid[location] = 1
     breadth_first(grid, location, m)
-    loc = [p for p in grid if grid[p] == 3]
-    print(f"oxygen sytem is at {loc}")
+    loc = [p for p in grid if grid[p] == 3][0]
     tree = defaultdict(set)
     build_tree(tree, grid, P(0, 0))
     nodes = {}
     calc_dist(tree, nodes, P(0, 0))
-    print(f"{loc} reachable in {nodes[loc[0]]} steps")
-    return nodes[loc[0]]
+    # show_screen(grid)
+    return nodes[loc]
 
 def test_part_1():
     res = part_1('aoc2019_15_input.txt')
     assert res == 242
 
+
+def part_2(program_file):
+    with open(program_file, 'r') as f:
+        instructions = list(map(int, f.readline().split(',')))
+    m = Machine(instructions)
+    m.reset()
+    # north (1), south (2), west (3), and east (4)
+    grid = defaultdict(int)
+    location = P(0, 0)
+    grid[location] = 1
+    breadth_first(grid, location, m)
+    loc = [p for p in grid if grid[p] == 3][0]
+    tree = defaultdict(set)
+    build_tree(tree, grid, P(0, 0))
+    nodes = {}
+    calc_dist(tree, nodes, P(0, 0))
+    tree = defaultdict(set)
+    build_tree(tree, grid, loc)
+    nodes = {}
+    calc_dist(tree, nodes, loc)
+    return max([nodes[p] for p in tree if p is not loc])
+
+
+def test_part_2():
+    res = part_2('aoc2019_15_input.txt')
+    assert res == 276
+
+
+
 if __name__ == '__main__':
-    res = part_1('aoc2019_15_input.txt')
-    print(f"aoc 2019 day 15 part 1: {res}")
+    res_1 = part_1('aoc2019_15_input.txt')
+    print(f"aoc 2019 day 15 part 1: {res_1}")
+    res_2 = part_2('aoc2019_15_input.txt')
+    print(f"aoc 2019 day 15 part 2: {res_2}")
