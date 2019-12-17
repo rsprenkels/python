@@ -155,3 +155,83 @@ for (x,y),c in hull.items():
         grid[y-miny][x-minx] = '#'
 for line in grid:
     print(''.join(line))
+
+
+
+
+# day 16
+I noticed that my input length was 650 * 10000 and the first 7 digits (we will call this N, which was 5979187 for my case) was close to the end). Matrix we are multiplying by is upper triangular so we can ignore the any input before N. Now, the submatrix we are left with is just an upper unitriangular matrix where all upper triangular part is one (because we never reach the third 0 in the "base pattern"). Therefore, the linear operation induced by the submatrix is just adding from ith term to the end, to get ith new term. This can be ran in linear time.
+
+# part 2 only, cleaned up little bit to make it little more readable
+
+# this is my own library for downloading the input file
+import advent
+
+input_string = advent.get_input(2019, 16).strip()
+offset = int(input_string[:7], 10)
+input_list = list(map(int, input_string)) * 10000
+input_length = len(input_list)
+
+for i in range(100):
+    partial_sum = sum(input_list[j] for j in range(offset, input_length))
+    for j in range(offset, input_length):
+        t = partial_sum
+        partial_sum -= input_list[j]
+        if t >= 0:
+            input_list[j] = t % 10
+        else:
+            input_list[j] = (-t) % 10
+
+
+print(input_list[offset: offset+8])
+
+
+level 2
+shmootington
+1 point
+·
+15 hours ago
+Do you share your advent of code library somewhere?
+
+
+
+level 3
+etotheipi1
+2 points
+·
+15 hours ago
+This is the get_input function from my library:
+
+from urllib.request import Request, urlopen
+import os.path
+
+def get_input(year, day):
+    input_file_name = f'advent input {year}-{day}.txt'
+    if os.path.exists(input_file_name):
+        with open(input_file_name, 'r') as input_file:
+            return input_file.read()
+
+    try:
+        url = f'https://adventofcode.com/{year}/day/{day}/input'
+        request = Request(url, headers={'cookie': 'session=get_your_value_from_your_browser_by_looking_at_the_request_header'})
+        input_bytes = urlopen(request).read()
+        input_text = input_bytes.decode('utf-8')
+        with open(input_file_name, 'w') as input_file:
+            input_file.write(input_text)
+        return input_text
+    except Exception as e:
+        print(e)
+        return None
+There is little else in the library at the moment.
+
+check out this day16 solution:
+
+from itertools import accumulate
+
+x = open('aoc2019_16_input.txt').read()
+x = list(map(int, (x*10000)[int(x[:7]):][::-1]))
+
+for _ in range(100):
+    x = list(accumulate(x, lambda a,b: (a+b)%10))
+
+print(*x[::-1][:8], sep='')
