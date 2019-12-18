@@ -14,6 +14,12 @@ class P(namedtuple('Point', ['x', 'y'])):
     def __sub__(self, other):
         return P(self.x - other.x, self.y - other.y)
 
+    def right(self):
+        return {P(0, 1): P(1, 0), P(1, 0): P(0, -1), P(0, -1): P(-1, 0), P(-1, 0): P(0, 1)}[self]
+
+    def left(self):
+        return {P(0, 1): P(-1, 0), P(1, 0): P(0, 1), P(0, -1): P(1, 0), P(-1, 0): P(0, -1)}[self]
+
     def normal(self):
         if self.x == 0:
             return P(0, self.y // abs(self.y))
@@ -134,7 +140,7 @@ def show_screen(grid, frame_counter=0, location=None):
     y_min = min([k.y for k in grid.keys()])
     y_max = max([k.y for k in grid.keys()])
     print()
-    for y in range(y_min, y_max + 1):
+    for y in range(y_max, y_min - 1, -1):
         for x in range(x_min, x_max + 1):
             if P(x, y) in grid:
                 print(f"{grid[P(x, y)]}", end='')
@@ -145,6 +151,7 @@ def show_screen(grid, frame_counter=0, location=None):
 
 
 dir_vector = [P(0, 1), P(0, -1), P(-1, 0), P(1, 0)]
+turn_right = [P(1, 0), P(0, 1), P(0, -1), P(-1, 0), ]
 dir_cmds = {P(0, 1): [1], P(0, -1): [2], P(-1, 0): [3], P(1, 0): [4]}
 back_cmds = {P(0, 1): [2], P(0, -1): [1], P(-1, 0): [4], P(1, 0): [3]}
 
@@ -171,12 +178,53 @@ def part_1(program_file):
     intersects = [k for k in grid.keys() if grid[k] == '#' and all([k + v in grid.keys() for v in dir_vector]) and all(
         [grid[k + v] == '#' for v in dir_vector])]
     sum_align = sum([p.x * p.y for p in intersects])
-    return sum_align
+    return sum_align, grid
 
 
 def test_part_1():
-    res = part_1('aoc2019_17_input.txt')
+    res, grid = part_1('aoc2019_17_input.txt')
     assert res == 10632
+
+
+sym_to_dir = {'^': P(0, 1), 'v': P(0, -1), '<': P(-1, 0), '>': P(1, 0)}
+
+
+# dir_vector = [P(0, 1), P(0, -1), P(-1, 0), P(1, 0)]
+
+def on_scaffold(grid, loc):
+    return loc in grid.keys() and grid[loc] == '#'
+
+
+def part_2(program_file):
+    res, grid = part_1('aoc2019_17_input.txt')
+    loc = [k for k in grid.keys() if grid[k] in ['<', '>', 'v', '^']][0]
+    dir = sym_to_dir[grid[loc]]
+    moves = []
+    while on_scaffold(grid, loc + dir) or on_scaffold(grid, loc + dir.right()) or on_scaffold(grid, loc + dir.left()):
+        steps = 0
+        while on_scaffold(grid, loc + dir):
+            loc += dir
+            steps += 1
+        if steps:
+            moves.append(str(steps))
+        if on_scaffold(grid, loc + dir.left()):
+            moves.append('L')
+            dir = dir.left()
+        elif on_scaffold(grid, loc + dir.right()):
+            moves.append('R')
+            dir = dir.right()
+    codes = []
+    for seq_len in range(2, len(moves) // 2):
+        for s in range(0, len(moves) - seq_len, 2):
+            codes.append(moves[s:s + seq_len])  # TODO make sets, not lists
+    num_codes = len(codes)
+    for combi in itertools.combinations(codes, 3):
+        a = combi
+
+
+def test_part_2():
+    res = part_2('aoc2019_17_input.txt')
+    assert ','.join(res) == ''
 
 # if __name__ == '__main__':
 #     res_1 = part_1('aoc2019_15_input.txt')
