@@ -174,7 +174,7 @@ def part_1(program_file):
             loc = P(0, loc.y + 1)
         else:
             pass
-    show_screen(grid)
+    # show_screen(grid)
     intersects = [k for k in grid.keys() if grid[k] == '#' and all([k + v in grid.keys() for v in dir_vector]) and all(
         [grid[k + v] == '#' for v in dir_vector])]
     sum_align = sum([p.x * p.y for p in intersects])
@@ -213,18 +213,21 @@ def part_2(program_file):
         elif on_scaffold(grid, loc + dir.right()):
             moves.append('R')
             dir = dir.right()
-    codes = []
-    for seq_len in range(2, len(moves) // 2):
-        for s in range(0, len(moves) - seq_len, 2):
-            codes.append(moves[s:s + seq_len])  # TODO make sets, not lists
-    num_codes = len(codes)
-    for combi in itertools.combinations(codes, 3):
-        a = combi
-
+    codebook = defaultdict(int)
+    for code_len in range(2, len(moves) // 2 + 1):
+        # print(f"tot:{len(moves)} len:{code_len:3}")
+        for start_index in range(len(moves) - code_len):
+            code = tuple(moves[start_index:start_index + code_len])
+            codebook[code] += 1
+    return codebook
 
 def test_part_2():
     res = part_2('aoc2019_17_input.txt')
-    assert ','.join(res) == ''
+    print()
+    print(f"book has {len(res)} codes")
+    print('\n'.join(str(x) for x in
+                    sorted([(k, res[k], (len(k) - 1) * res[k]) for index, k in enumerate(res.keys()) if res[k] > 1],
+                           key=lambda x: -x[2])))
 
 # if __name__ == '__main__':
 #     res_1 = part_1('aoc2019_15_input.txt')
