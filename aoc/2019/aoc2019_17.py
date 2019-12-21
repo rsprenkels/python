@@ -140,7 +140,16 @@ def show_screen(grid, frame_counter=0, location=None):
     y_min = min([k.y for k in grid.keys()])
     y_max = max([k.y for k in grid.keys()])
     print()
+    print(f"   ", end='')
+    for x in range(x_min, x_max + 1):
+        print(f"{x//10}", end='')
+    print()
+    print(f"   ", end='')
+    for x in range(x_min, x_max + 1):
+        print(f"{x%10}", end='')
+    print()
     for y in range(y_max, y_min - 1, -1):
+        print(f"{y:2} ", end='')
         for x in range(x_min, x_max + 1):
             if P(x, y) in grid:
                 print(f"{grid[P(x, y)]}", end='')
@@ -197,6 +206,7 @@ def on_scaffold(grid, loc):
 
 def part_2(program_file):
     res, grid = part_1('aoc2019_17_input.txt')
+    show_screen(grid)
     loc = [k for k in grid.keys() if grid[k] in ['<', '>', 'v', '^']][0]
     dir = sym_to_dir[grid[loc]]
     moves = []
