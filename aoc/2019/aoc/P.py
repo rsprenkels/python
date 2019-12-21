@@ -3,6 +3,7 @@ from collections import namedtuple
 
 
 class P(namedtuple('Point', ['x', 'y'])):
+
     def __add__(self, other):
         return P(self.x + other.x, self.y + other.y)
 
