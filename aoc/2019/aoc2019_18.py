@@ -77,8 +77,24 @@ def shortest_path(tree, tunmap, A, B):
 def steps_to_remove_keys(tree, tunmap):
     cur_loc = [k for k in tree.keys() if tunmap[k] == '@'][0]
     minsteps = math.inf
-    for key in reachable_keys(tree, tunmap):
-        dup_tunmap = copy.deepcopy(tunmap)
+    rk = reachable_keys(tree, tunmap)
+    dup_tunmap = copy.deepcopy(tunmap)
+    for k in rk:
+        dup_tunmap[k] = '.' # remove keys
+    for dk in [dk for dk in tunmap.keys() if tunmap[dk] in [tunmap[k].upper() for k in rk]]:
+        dup_tunmap[dk] = '.' # remove doors
+    rk_with_doorsopen = reachable_keys(dup_tunmap)
+    # find the most nearby key
+    min_dist = math.inf
+    last_key = None
+    for k in rk_with_doorsopen:
+        for start_pos in rk:
+            dist = shortest_path(tree, tunmap, start_pos, k)
+            if dist < min_dist:
+                min_dist = dist
+                last_key = start_pos
+
+    for key in rk:
         steps_needed = shortest_path(tree, tunmap, cur_loc, key)
         doorlist = [k for k in tunmap.keys() if tunmap[k] == tunmap[key].upper()]
         if doorlist:
