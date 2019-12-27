@@ -1,6 +1,6 @@
 import copy
 import math
-from collections import defaultdict
+from collections import defaultdict, deque
 from aoc import P
 
 maze = """
@@ -45,67 +45,33 @@ def test_tunnel_map():
                   P(x=4, y=0): '#', P(x=4, y=1): 'B', P(x=4, y=2): '#',
                   P(x=5, y=0): '#', P(x=5, y=1): '#', P(x=5, y=2): '#'}
 
-def reachable_keys(tree, tunmap):
-    reachable_keys = []
-    cur_loc = [k for k in tree.keys() if tunmap[k] == '@'][0]
-    tocheck = {cur_loc}
-    seen = set()
-    while tocheck:
-        k = tocheck.pop()
-        seen.add(k)
-        for canreach in [p for p in tree[k] if p not in seen]:
-            if tunmap[canreach].islower():
-                reachable_keys.append(canreach)
-            elif tunmap[canreach] == '.':
-                tocheck.add(canreach)
-    return reachable_keys
 
-def shortest_path(tree, tunmap, A, B):
-    tocheck = {(A, 0)}
-    seen = set()
-    mindist = math.inf
-    while tocheck:
-        k, dist = tocheck.pop()
-        seen.add(k)
-        for canreach in [p for p in tree[k] if p not in seen and (tunmap[p].islower() or tunmap[p] == '.')]:
-            if canreach == B:
-                mindist = min(mindist, dist + 1)
-            else:
-                tocheck.add((canreach, dist + 1))
-    return mindist
-
-def steps_to_remove_keys(tree, tunmap):
-    cur_loc = [k for k in tree.keys() if tunmap[k] == '@'][0]
+def steps_all_keys(tree, tun_map):
+    cur_loc = [k for k in tree.keys() if tun_map[k] == '@'][0]
+    all_keys = {tun_map[k] for k in tree.keys() if tun_map[k].islower()}
     minsteps = math.inf
-    rk = reachable_keys(tree, tunmap)
-    dup_tunmap = copy.deepcopy(tunmap)
-    for k in rk:
-        dup_tunmap[k] = '.' # remove keys
-    for dk in [dk for dk in tunmap.keys() if tunmap[dk] in [tunmap[k].upper() for k in rk]]:
-        dup_tunmap[dk] = '.' # remove doors
-    rk_with_doorsopen = reachable_keys(dup_tunmap)
-    # find the most nearby key
-    min_dist = math.inf
-    last_key = None
-    for k in rk_with_doorsopen:
-        for start_pos in rk:
-            dist = shortest_path(tree, tunmap, start_pos, k)
-            if dist < min_dist:
-                min_dist = dist
-                last_key = start_pos
-
-    for key in rk:
-        steps_needed = shortest_path(tree, tunmap, cur_loc, key)
-        doorlist = [k for k in tunmap.keys() if tunmap[k] == tunmap[key].upper()]
-        if doorlist:
-            dup_tunmap[doorlist[0]] = '.'
-        dup_tunmap[cur_loc] = '.'
-        dup_tunmap[key] = '@'
-        # if reachable_keys(tree, dup_tunmap):
-        if any(c.islower() for c in dup_tunmap.values()):
-            steps_needed += steps_to_remove_keys(tree, dup_tunmap)
-        minsteps = min(minsteps, steps_needed)
+    seen = set()
+    queue = deque()
+    queue.append((cur_loc, 0, set()))
+    while queue:
+        node, dist, keyset = queue.popleft()
+        seen.add((node, frozenset(keyset)))
+        for reachable in tree[node]:
+            if tun_map[reachable].islower():
+                newkeyset = keyset | set(tun_map[reachable])
+                if newkeyset == all_keys:
+                    if dist + 1 < minsteps:
+                        minsteps = dist + 1
+                elif (reachable, frozenset(newkeyset)) not in seen:
+                    queue.append((reachable, dist + 1, newkeyset))
+            elif tun_map[reachable].isupper():
+                if tun_map[reachable].lower() in keyset and (reachable, frozenset(keyset)) not in seen:
+                    queue.append((reachable, dist + 1, keyset))
+            elif (reachable, frozenset(keyset)) not in seen:
+                queue.append((reachable, dist + 1, keyset))
     return minsteps
+
+
 
 def test_aoc1():
     maze = """
@@ -115,7 +81,7 @@ def test_aoc1():
 """[1:-1]
     tunmap = tunnel_map(maze.split('\n'))
     tree = tree_from_map(tunmap)
-    min_steps = steps_to_remove_keys(tree, tunmap)
+    min_steps = steps_all_keys(tree, tunmap)
     assert min_steps == 8
 
 def test_aoc2():
@@ -128,12 +94,12 @@ def test_aoc2():
 """[1:-1]
     tunmap = tunnel_map(maze.split('\n'))
     tree = tree_from_map(tunmap)
-    min_steps = steps_to_remove_keys(tree, tunmap)
+    min_steps = steps_all_keys(tree, tunmap)
     assert min_steps == 86
 
 def test_part1():
     tunmap = read_tunnels_fromfile('aoc2019_18_input.txt')
     tree = tree_from_map(tunmap)
-    min_steps = steps_to_remove_keys(tree, tunmap)
-    assert min_steps == 86
+    min_steps = steps_all_keys(tree, tunmap)
+    assert min_steps == 4590
 
