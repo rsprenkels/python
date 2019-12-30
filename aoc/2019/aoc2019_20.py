@@ -18,6 +18,13 @@ def find_labels_x(labels, maze, at_row, offset):
             labels[maze[P(x, at_row)] + maze[P(x, at_row + 1)]].append(P(x, at_row + offset))
 
 
+def find_labels_y(labels, maze, at_col, offset):
+    xmin, xmax, ymin, ymax = get_maze_dimensions(maze)
+    for y in range(ymin, ymax + 1):
+        if maze[P(at_col, y)].isupper():
+            labels[maze[P(at_col, y)] + maze[P(at_col + 1, y)]].append(P(at_col + offset, y))
+
+
 def readmaze(lines: str) -> Dict:
     maze = defaultdict(str)
     for y, line in enumerate(lines):
@@ -25,11 +32,19 @@ def readmaze(lines: str) -> Dict:
             maze[P(x,y)] = c
     labels = defaultdict(list)
     xmin, xmax, ymin, ymax = get_maze_dimensions(maze)
+    for y, x in ((y, x) for y in range(2, ymax // 2) for x in range (2, xmax - 2)):
+        if maze[P(x, y)] not in '/#.':
+            donut_width = y - 2
+            break
     find_labels_x(labels, maze, at_row=0, offset=2)
     find_labels_x(labels, maze, at_row=ymax-1, offset=-1)
-    find_labels_x(labels, maze, at_row=10, offset=2)
-    find_labels_x(labels, maze, at_row=7, offset=-1)
-    print(labels)
+    find_labels_x(labels, maze, at_row=donut_width + 2, offset=-1)
+    find_labels_x(labels, maze, at_row=ymax - donut_width - 3, offset=2)
+    find_labels_y(labels, maze, at_col=0, offset=2)
+    find_labels_y(labels, maze, at_col=xmax-1, offset=-1)
+    find_labels_y(labels, maze, at_col=donut_width + 2, offset=-1)
+    find_labels_y(labels, maze, at_col=xmax - donut_width - 3, offset=2)
+    return maze, labels
 
 def test_readmaze_1():
     lines = """
@@ -53,5 +68,4 @@ FG..#########.....#
              Z       
              Z       
 """.split('\n')[1:-1]
-    m = readmaze(lines)
-    print(m)
+    maze, labels = readmaze(lines)
