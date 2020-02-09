@@ -1,0 +1,9 @@
+<h1>Word counter</h1>
+Enter some text in the box below, and press 'Count'.
+
+<a href="{% url 'about' %}">About</a>
+
+<form action="{% url 'count' %}">
+    <textarea rows="10" cols="80" name="fulltext"></textarea> <br>
+    <input type="submit" value="Count!" />
+</form>
