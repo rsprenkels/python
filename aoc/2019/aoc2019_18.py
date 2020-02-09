@@ -1,42 +1,24 @@
 import math
-from collections import namedtuple
+from collections import namedtuple, defaultdict
+
+from aoc import *
 
 
-class P(namedtuple('Point', ['x', 'y'])):
-
-    def __add__(self, other):
-        return P(self.x + other.x, self.y + other.y)
-
-    def __sub__(self, other):
-        return P(self.x - other.x, self.y - other.y)
-
-    def right(self):
-        return {P(0, 1): P(1, 0), P(1, 0): P(0, -1), P(0, -1): P(-1, 0), P(-1, 0): P(0, 1)}[self]
-
-    def left(self):
-        return {P(0, 1): P(-1, 0), P(1, 0): P(0, 1), P(0, -1): P(1, 0), P(-1, 0): P(0, -1)}[self]
-
-    def normal(self):
-        if self.x == 0:
-            return P(0, self.y // abs(self.y))
-        elif self.y == 0:
-            return P(self.x // abs(self.x), 0)
-        else:
-            return P(self.x // math.gcd(self.x, self.y), self.y // math.gcd(self.x, self.y))
-
-
-def tunnel_map(lines):
-    the_map = {}
+def tmap(lines):
+    grid = {}
     for y, line in enumerate(lines):
         for x, char in enumerate(line):
-            the_map[P(x, y)] = char
-    return the_map
+            grid[P(x, y)] = char
+    nonwalls = [p for p in grid.keys() if grid[p] != '#']
+    tree = defaultdict(list)
+    for p in nonwalls:
+        print(f"{p} is a nonwall {grid[p]}")
 
 
-def read_tunnels_fromfile(filename):
+def read_tmap_fromfile(filename):
     with open(filename, 'r') as f:
         lines = f.readlines()
-    return tunnel_map(lines)
+    return tmap(lines)
 
 
 def test_tm():
@@ -45,5 +27,5 @@ def test_tm():
 #b.A.@.a#
 #########
 """[1:-1]
-    tm = tunnel_map(lines.split('\n'))
+    tm = tmap(lines.split('\n'))
     assert tm == None

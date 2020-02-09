@@ -1,0 +1,13 @@
+<title>Result page</title>
+<h1>There are {{ count }} words in your text</h1>
+
+<a href="{% url 'home' %}">New Text</a>
+
+<h1>Your Text:</h1>
+{{ fulltext }}
+
+<h1>Word frequencies</h1>
+
+{% for word, counttotal in sortedwordlist %}
+    {{ word }} - {{ counttotal }} <br />
+{% endfor %}
