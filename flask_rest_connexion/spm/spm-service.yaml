@@ -1,0 +1,175 @@
+openapi: 3.0.0
+info:
+  version: 0.1-SNAPSHOT
+  title: SPM_SERVICE
+  contact:
+    name: Deutsche Glasfaser
+    email: info@deutsche-glasfaser.de
+
+  ## see also https://swagger.io/specification/
+
+  description: >
+    stuff
+
+
+
+security:
+  - Basic_authentication: []
+
+paths:
+  /sales_partners:
+    get:
+      tags: [salesPartners]
+      description: Returns the available Sales Partners
+      operationId: "sales_partners.read"
+      parameters:
+        - $ref: '#/components/parameters/userHeaderParam'
+      responses:
+        200:
+          description: 200 - OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesPartners'
+        400:
+          $ref: '#/components/responses/400_BadRequest'
+        429:
+          $ref: '#/components/responses/429_TooManyRequest'
+        500:
+          $ref: '#/components/responses/500_InternalError'
+
+servers:
+  - url: "http://localhost:5000/v1"
+
+components:
+
+  parameters:
+
+    #    offsetParam:  # <-- Arbitrary name for the definition that will be used to refer to it.
+    #      # Not necessarily the same as the parameter name.
+    #      in: query
+    #      name: offset
+    #      required: false
+    #      schema:
+    #        type: integer
+    #        minimum: 0
+    #      description: The number of items to skip before starting to collect the result set.
+    #
+    #    limitParam:
+    #      in: query
+    #      name: limit
+    #      required: false
+    #      schema:
+    #        type: integer
+    #        minimum: 1
+    #        maximum: 50
+    #        default: 20
+    #      description: The numbers of items to return.
+
+    userHeaderParam:
+      in: header
+      name: user
+      schema:
+        type: string
+      required: false
+
+  responses:
+    400_BadRequest:
+      description: The input request is not valid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          examples:
+            missingHeader:
+              value:
+                code: 102
+                type: MISSING_HEADER
+                message: "Missing request header 'X-DG-AO-Code' for method parameter of type String"
+
+#    404_NotFound:
+#      description: Not Found
+#      content:
+#        application/json:
+#          schema:
+#            $ref: '#/components/schemas/ApiResponse'
+#          example:
+#            code: 2
+#            type: NOT_FOUND
+#            message: 'Not Found (resource: <identification>)'
+
+    429_TooManyRequest:
+      description: The server received too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example:
+            code: 2
+            type: TOO_MANY_REQUESTS
+            message: 'server received too many requests'
+
+    500_InternalError:
+      description: Something went wrong on the server side
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example:
+            code: 1
+            type: INTERNAL_SERVER_ERROR
+            message: 'Something went wrong on the server side'
+
+  schemas:
+    # Basic types
+    Id:
+      type: integer
+      format: int64
+      example: 190959
+
+    spName:
+      type: string
+      maxLength: 20
+      example: some sales partner name
+
+
+    # Objects
+    ## Objects -> SalesPartner
+    SalesPartner:
+      type: object
+      description: a Address
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        name:
+          $ref: '#/components/schemas/spName'
+
+    SalesPartners:
+      type: array
+      description: an array of SalesPartner
+      items:
+        $ref: '#/components/schemas/SalesPartner'
+
+    ## Objects -> ApiResponse
+    ApiResponse:
+      type: object
+      description: The response to an API call
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+          minLength: 1
+          maxLength: 64
+        message:
+          type: string
+          minLength: 1
+          maxLength: 2048
+      required: [code, type, message, ]
+
+
+  securitySchemes:
+    Basic_authentication:
+      type: http
+      scheme: basic

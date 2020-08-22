@@ -1,0 +1,6 @@
+https://realpython.com/flask-connexion-rest-api/
+
+
+# swagger-codegen needs:
+ - nexus (added IP to /etc/hosts so that nexus001 resolves)
+ - https://www.javahelps.com/2015/03/install-oracle-jdk-in-ubuntu.html
