@@ -1,26 +1,25 @@
-print(sum(len(s[:-1]) - len(eval(s)) for s in open('2015_08_input.txt', 'r')))
-
-# 1346 too high
-# 1345 wrong
-#
-# 1129 too low
 
 
-STRING = open('2015_08_input.txt').read()
-if STRING[-1] == '\n':
-    STRING = STRING[:-1]
+with open('2015_08_input.txt', 'r') as f:
+    diff = 0
+    for line in f.readlines():
+        line = line.rstrip()
+        diff += len(line) - len(eval(line))
+    print(f'answer part 1 = {diff}')
+    #1342
 
-LINES = STRING.split('\n')
 
-answer1 = 0
-
-for l in LINES:
-    answer1 += len(l) - len(eval(l))
-
-print(answer1)
-answer2 = 0
-
-for l in LINES:
-    answer2 += l.count('\\') + l.count('"') + 2
-
-print(answer2)
+with open('2015_08_input.txt', 'r') as f:
+    diff = 0
+    for line in f.readlines():
+        line = line.rstrip()
+        diff += 2
+        for c in line:
+            if c == '\\':
+                diff += 1
+            elif c == '"':
+                diff += 1
+            else:
+                diff += 0
+    print(f'answer part 2 = {diff}')
+    # 2074
