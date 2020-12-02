@@ -1,5 +1,3 @@
-import math
-from itertools import combinations
 
 number_lines = open('2020_01.txt', 'r').readlines()
 
@@ -18,6 +16,10 @@ for a in range(len(numbers) - 2):
         for c in range(b+1, len(numbers)):
             if numbers[a] + numbers[b] + numbers[c]== 2020:
                 print(f"2020_01 part 2: {numbers[a] * numbers[b] * numbers[c]} ")
+
+
+import math
+from itertools import combinations
 
 def read_input():
     with open('2020_01.txt') as f:
