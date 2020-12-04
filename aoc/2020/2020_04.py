@@ -1,7 +1,6 @@
 import re
 from typing import Set
 
-
 def read_input():
     with open('2020_04.txt') as f:
         passport_list = []
@@ -17,44 +16,35 @@ def read_input():
                 lines.pop(0)
         return passport_list
 
-def isEmptySet(s: Set) -> bool:
-    return not s
-
 def hasElements(s: Set) -> bool:
     return not not s
-
-def solve_p1(puzzle):
-    required_fields = {'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'}
-    valid_pps = 0
-    for passport in puzzle:
-        if hasElements(required_fields - set(passport.keys())): continue
-        valid_pps += 1
-    return valid_pps
 
 def between(x: int, a: int, b: int) -> bool:
     return x >= a and x <= b
 
-def solve_p2(puzzle):
+def isvalid_part1(passport) -> bool:
     required_fields = {'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'}
-    valid_pps = 0
-    for passport in puzzle:
-        if hasElements(required_fields - set(passport.keys())): continue
-        if not between(int(passport['byr']), 1920, 2002): continue
-        if not between(int(passport['iyr']), 2010, 2020): continue
-        if not between(int(passport['eyr']), 2020, 2030) or len(passport['eyr']) != 4: continue
-        if not re.search(r'^[0-9]+(in|cm)$', passport['hgt']): continue
-        height, unit = int(passport['hgt'][:-2]), passport['hgt'][-2:]
-        if unit == 'in' and not between(height, 59, 76): continue
-        if unit == 'cm' and not between(height, 150, 193): continue
-        if not re.search(r'^#[a-f0-9]{6}$', passport['hcl']): continue
-        if passport['ecl'] not in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']: continue
-        if not re.search(r'^[0-9]{9}$', passport['pid']): continue
-        valid_pps += 1
-    return valid_pps
+    if hasElements(required_fields - set(passport.keys())): return False
+    return True
+
+def isvalid_part2(passport) -> bool:
+    if not isvalid_part1(passport): return False
+    if not between(int(passport['byr']), 1920, 2002): return False
+    if not between(int(passport['iyr']), 2010, 2020): return False
+    if not between(int(passport['eyr']), 2020, 2030) or len(passport['eyr']) != 4: return False
+    if not re.search(r'^[0-9]+(in|cm)$', passport['hgt']): return False
+    height, unit = int(passport['hgt'][:-2]), passport['hgt'][-2:]
+    if unit == 'in' and not between(height, 59, 76): return False
+    if unit == 'cm' and not between(height, 150, 193): return False
+    if not re.search(r'^#[a-f0-9]{6}$', passport['hcl']): return False
+    if passport['ecl'] not in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']: return False
+    if not re.search(r'^[0-9]{9}$', passport['pid']): return False
+    return True
+
+def solve(puzzle, tester=isvalid_part1):
+    return len([1 for passport in puzzle if tester(passport)])
 
 puzzle = read_input()
-print(puzzle)
-print(f'part 1: {solve_p1(puzzle)}')
-print(f'part 2: {solve_p2(puzzle)}')
-# 110 is too high
+print(f'part 1: {solve(puzzle)}')
+print(f'part 2: {solve(puzzle, isvalid_part2)}')
 
