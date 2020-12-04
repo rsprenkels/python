@@ -12,7 +12,7 @@ def solve(puzzle, right=3, down=1):
     return trees
 
 puzzle = read_input()
-print(f'part 1: {solve(puzzle, 3, 1)}')
+print(f'part 1: {solve(puzzle)}')
 print(f'part 2: {solve(puzzle, 1, 1) * solve(puzzle, 3, 1) * solve(puzzle, 5, 1) * solve(puzzle, 7, 1) * solve(puzzle, 1, 2)}')
 
 # goal: count how many trees there are on a given slope, to reach bottom line. Start is at (0,0), top left of the forest
