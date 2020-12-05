@@ -1,6 +1,3 @@
-import re
-from typing import Set
-
 def read_input():
     to_binary = {'F':'0', 'B':'1', 'L':'0', 'R':'1'}
     with open('2020_05.txt') as f:
@@ -18,10 +15,7 @@ def solve_part2(puzzle):
     for index, seat in enumerate(in_order):
         if in_order[index + 1] != in_order[index] + 1:
             return in_order[index] + 1
-    return -10
 
 puzzle = read_input()
-print(sorted(puzzle))
 print(f'part 1: {solve_part1(puzzle)}')
 print(f'part 2: {solve_part2(puzzle)}')
-
