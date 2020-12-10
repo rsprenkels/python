@@ -9,6 +9,8 @@ def read_input():
             if lines:
                 lines.pop(0)
         return result
+    # with open('2020_09.txt') as f:
+    #     return  [int(line.rstrip()) for line in f.readlines()]
 
 def solve(puzzle):
     return 1
