@@ -1,5 +1,5 @@
-def read_input():
-    with open('2020_06.txt') as f:
+def read_input(file_name):
+    with open(file_name) as f:
         lines =  [line.rstrip() for line in f.readlines()]
         result = []
         while lines:
@@ -15,7 +15,7 @@ def read_input():
 def solve(puzzle):
     return 1
 
-puzzle = read_input()
+puzzle = read_input('2020_14.txt')
 print(puzzle)
 print(f'part 1: {solve(puzzle)}')
 print(f'part 2: {solve(puzzle)}')
